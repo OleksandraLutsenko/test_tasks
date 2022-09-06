@@ -47,7 +47,12 @@ class Subscribtion {
     // : "No such a show on our streaming service"
   }
 
-  getRecommendationTrending() {}
+  getRecommendationTrending() {
+    // const thisYearMostViewed = Object.create(
+    //   StreamingService.prototype.getMostViewedShowsOfYear("2022")
+    // );
+    // console.log(thisYearMostViewed);
+  }
 
   getRecommendationByGenre(genre) {}
 }
@@ -61,21 +66,72 @@ class StreamingService {
     console.log(count);
   }
 
-  addShow(show) {}
+  addShow(show) {
+    const createShow = new Show(show);
+    return createShow;
+  }
 
-  getMostViewedShowsOfYear(year) {}
+  getMostViewedShowsOfYear(year) {
+    const sortedNumDesc = new Map(
+      [...DUMMY_Popular].sort((a, b) => b[1] - a[1])
+    );
 
-  getMostViewedShowsOfGenre(genre) {}
+    console.log(sortedNumDesc);
+    const obj = Object.fromEntries(sortedNumDesc);
+    console.log(obj);
+
+    let ShowsMatch = [];
+    for (let key of Object.keys(obj)) {
+      ShowsMatch.push(this.shows.filter((show) => show.name === key));
+    }
+    console.log(ShowsMatch);
+
+    const processedArr = ShowsMatch.reduce((a, b) => [...a, ...b], []);
+    console.log(processedArr);
+    console.log(processedArr[0].releaseDate.split("").slice(-4).join(""));
+
+    const MostViewedShowsOfYear = processedArr
+      .filter((show) => show.releaseDate.split("").slice(-4).join("") === year)
+      .slice(0, 10);
+
+    // const slicedArray = MostViewedShowsOfYear.slice(0, 10);
+
+    console.log(MostViewedShowsOfYear);
+  }
+
+  getMostViewedShowsOfGenre(genre) {
+    const sortedNumDesc = new Map(
+      [...DUMMY_Popular].sort((a, b) => b[1] - a[1])
+    );
+
+    console.log(sortedNumDesc);
+    const obj = Object.fromEntries(sortedNumDesc);
+    console.log(obj);
+
+    let ShowsMatch = [];
+    for (let key of Object.keys(obj)) {
+      ShowsMatch.push(this.shows.filter((show) => show.name === key));
+    }
+    console.log(ShowsMatch);
+
+    const processedArr = ShowsMatch.reduce((a, b) => [...a, ...b], []);
+    console.log(processedArr);
+
+    const MostViewedShowsOfGenre = processedArr
+      .filter((show) => show.genres.find((gen) => gen === genre))
+      .slice(0, 10);
+    console.log(MostViewedShowsOfGenre);
+  }
 }
 
 class Show {
-  constructor(name, genre, releaseDate) {
+  constructor(name, genres, releaseDate) {
     // if (this.constructor.name === "Show") {
     //   throw new Error(
     //     `${this.constructor.name}: can not create instance of abstract class`
     //   );
     this.name = name;
-    this.genre = genre;
+    this.genres = genres;
     this.releaseDate = releaseDate;
   }
 
@@ -84,20 +140,20 @@ class Show {
 }
 
 class Movie extends Show {
-  constructor(name, genre, releaseDate) {
-    super(name, genre, releaseDate);
+  constructor(name, genres, releaseDate) {
+    super(name, genres, releaseDate);
   }
 }
 
 class Episode extends Show {
-  constructor(name, genre, releaseDate) {
-    super(name, genre, releaseDate);
+  constructor(name, genres, releaseDate) {
+    super(name, genres, releaseDate);
   }
 }
 
 class Series extends Show {
-  constructor(name, genre, releaseDate, episodes) {
-    super(name, genre, releaseDate);
+  constructor(name, genres, releaseDate, episodes) {
+    super(name, genres, releaseDate);
     this.episodes = episodes;
   }
 }
@@ -230,3 +286,17 @@ IvanSunbscribtion.watch("Stranger Things");
 IvanSunbscribtion.watch("The Northman");
 IvanSunbscribtion.watch("Jurassic World Dominion");
 IvanSunbscribtion.watch("Stranger Things");
+
+const DUMMY_Popular = new Map([
+  ["Stranger Things", 150],
+  ["Peaky Blinders", 87],
+  ["Jurassic World Dominion", 104],
+  ["Doctor Strange in the Multiverse of Madness", 56],
+  ["The Cellar", 12],
+]);
+
+NetflixSubscribtion.getMostViewedShowsOfYear("2022");
+NetflixSubscribtion.getMostViewedShowsOfGenre("action");
+
+IvanSunbscribtion.getRecommendationTrending();
+console.log(StreamingService.getMostViewedShowsOfYear("2022"));
